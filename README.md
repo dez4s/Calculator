@@ -1,1 +1,1 @@
-# Calculator
+This project combines HTML, CSS and JavaScript in order to create a fully functional calculator that can be used through an UI.
