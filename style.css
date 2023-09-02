@@ -4,7 +4,8 @@
     box-sizing: border-box;
     text-decoration: none;
     list-style-type: none;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Russo One, Arial, sans-serif;
+    color: #ec7728;
 }
 
 body {
@@ -12,6 +13,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    background-color: #2a3347;
 }
 
 @supports not (height: 100dvh) {
@@ -20,17 +22,78 @@ body {
     }
 }
 
-.container {
-    border: 1px solid red;
-    width: 25rem;
-    height: 40rem;
+header {
+    font-size: 1.7rem;
+    padding-top: 3rem;
 }
-
 
 main {
     margin: auto;
 }
 
+footer {
+    padding-bottom: 0.5rem;
+}
 
+.container {
+    width: 25rem;
+    height: 35rem;
+    display: flex;
+    flex-direction: column;
+    /* box-shadow:  rgb(255, 168, 84, 0.4) 5px 5px, rgb(255, 168, 84, 0.3) 10px 10px,rgb(255, 177, 136, 0.2) 15px 15px, rgb(255, 177, 136, 0.1) 20px 20px, rgb(255, 192, 183, 0.05) 25px 25px; */
+    box-shadow: rgb(0, 0, 0, 0.25) 1.5px 1.5px, rgb(255, 168, 84, 0.4) 5px 5px, rgb(255, 177, 136, 0.2) 10px 10px, rgb(255, 192, 183, 0.1) 15px 15px;
+    background-color: #ec7728;
+    border-radius: 1%;
+    padding: 0.3rem;
+    border: 1px transparent black;
+}
 
+.screen {
+    flex: 1;
+    margin: 0.25rem;
+    background-color:  #414756;
+    border-radius: 2%;
+    box-shadow: rgb(0, 0, 0, 0.4) 1px 1px 1px 1px, rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+    position: relative;
+}
 
+.line {
+    flex: 1;
+    display: flex;
+}
+
+.line button {
+    flex: 1;
+    margin: 0.3rem;
+    border-radius: 10%;
+    box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+    background-color:  #414756;
+    font-size: 1.5rem;
+    color: #FFECCC;
+}
+
+/* button:hover {
+  box-shadow: 0 0.5em 0.5em -0.4em var(--hover);
+  transform: translateY(-0.25em);
+  box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+} */
+
+.screen > p.primary  {
+    color: #FFECCC;
+    position: absolute;
+    bottom: 0rem;
+    right: 0.75rem;
+    font-size: 2.5rem;
+}
+
+.screen > p.secondary  {
+    color: #FFECCC;
+    position: absolute;
+    top: 0.5rem;
+    right: 1rem;
+    font-size: 1.5rem;
+}
+
+button[data-operator] {
+    font-size: 2rem;
+}
