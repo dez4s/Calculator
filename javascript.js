@@ -3,9 +3,22 @@ function Calculator() {
     this['-'] = (a, b) => a - b;
     this['*'] = (a, b) => a * b;
     this['÷'] = (a, b) => a / b;
+    this['^'] = (a, b) => a ** b;
 
     this.calculate = (a, b, op) => {
-        return this[op](a, b);
+        const mathOperationResult = this[op](parseFloat(a), parseFloat(b));
+        let aDecimals = 0;
+        let bDecimals = 0;
+
+        if (a.toString().includes('.')) aDecimals = a.split('').slice(a.split('').indexOf('.') + 1).length;
+        if (b.toString().includes('.')) bDecimals = b.split('').slice(b.split('').indexOf('.') + 1).length;
+
+
+        if (aDecimals > bDecimals) {
+            return mathOperationResult.toFixed(aDecimals);
+        } else {
+            return mathOperationResult.toFixed(bDecimals);
+        }
     }
 }
 
@@ -14,67 +27,81 @@ const calc = new Calculator();
 let a = null;
 let b = null;
 let op = null;
-let result;
+let result = null;
 
 function getNumber() {
+    const number = this.getAttribute('data-number');
     if (!op) {
-        if (!a) { // if `a` will be equal to 0 (number type not string), the equality test will return true and it will overwrite the 0 value assigned to `a`. Alternative 'if (a === null)' =>  The equality test returns true only if `a` is null and only then it will assign a new value to `a`, not if `a` is equal to 0. Both methods work and it depends on the type of behavior is wanted for the calculator to have.
+        if (a === null) { 
             result = null;
-            a = this.getAttribute('data-number');
-            primaryScreen.textContent = a;
-            secondaryScreen.textContent = '';
-        } else {
-            a += this.getAttribute('data-number');
-            primaryScreen.textContent = a;
+            a = parseFloat(number);
+            updateScreen(a, ' ');
+        } else if (a !== null) {
+            a += number;
+
+            if (a.includes('.')) {
+                a = parseFloat(a).toFixed(a.split('').slice(a.split('').indexOf('.')).length - 1);
+            } else {
+                a = parseFloat(a);
+            }
+
+            updateScreen(a, null);
         }
     } else if (op) {
         if (b === null) {
-            b = this.getAttribute('data-number');
-            primaryScreen.textContent = b;
-        } else {
-            b += this.getAttribute('data-number');
-            primaryScreen.textContent = b;
+            b = parseFloat(number);
+            updateScreen(b, null);
+        } else if (b !== null) {
+            b += number;
+
+            if (b.includes('.')) {
+                b = parseFloat(b).toFixed(b.split('').slice(b.split('').indexOf('.')).length - 1);
+            } else {
+                b = parseFloat(b);
+            }
+
+            updateScreen(b, null);
         }
     }
 
+    console.log(a.toString().length);
+
     console.log('---------getNumber---------')
-    console.log("a: " + a);
-    console.log("b: " + b); 
-    console.log('op: ' + op);
-    console.log('result: ' + result);
+    console.log("a: ", a);
+    console.log("b: ", b); 
+    console.log('op: ', op);
+    console.log('result: ', result);
 }
 
 function setOperator(e) {
-     if (op && (b)) { 
+     if (op && (b !== null)) { 
         doFunc(e);
         a = result;
         result = null;
-    } else if (result) { // the equality test returns false if `result` will be equal to 0 (number type not string). For example, if the return to the calculate method is not transformed to a string, and is equal to 0 number type. Alternative: `if (result !== null)`, will work with `result = 0`. Same logic applies to `a` and `b`. Both methods work and it depends on the type of behavior is wanted for the calculator to have.
+    } else if (result !== null) { 
         a = result;
         result = null;
     } 
 
-    if (a) {
+    if (a !== null) {
         op = this.getAttribute('data-operator');
-        secondaryScreen.textContent = a + " " + op + " ";
-        primaryScreen.textContent = b;
+        updateScreen(' ', `${a} ${op}`);
     }
     
     console.log('--------setOperator----------')
-    console.log("a: " + a);
-    console.log("b: " + b); 
-    console.log('op: ' + op);
-    console.log('result: ' + result);
+    console.log("a: ", a);
+    console.log("b: ", b); 
+    console.log('op: ', op);
+    console.log('result: ', result);
 }
 
 function doFunc(e) {
-    
     const funcButton = e.target.getAttribute('data-func');
     const isOpPressedTwice = e.target.hasAttribute('data-operator');
+
     if ((funcButton == '=' || isOpPressedTwice) && (b !== null)) {
-        result = calc.calculate(Number(a), Number(b), op).toString();
-        primaryScreen.textContent = result;
-        secondaryScreen.textContent += b + ' =';
+        result = calc.calculate(a, b, op);
+        updateScreen(result, `${a} ${op} ${b} =`);
         a = null;
         b = null;
         op = null;
@@ -85,46 +112,123 @@ function doFunc(e) {
         b = null;
         op = null;
         result = null;
-        primaryScreen.textContent = '';
-        secondaryScreen.textContent = '';
-    }
+        updateScreen(' ', ' ');
+    } 
 
     if (funcButton == 'del') {
-        if (a && !op) {
-            a = a.split('').slice(0, a.length - 1).join('');
-            primaryScreen.textContent = a;
-            if (a.length == 0) {
+        if (a !== null) {
+            if (a.toString().length == 1) {
                 a = null;
-                primaryScreen.textContent = '';
+                updateScreen(' ', null);
+
+            } else if (!op) {
+                if (a && a.toString().length === 2 && a.toString().split('')[0] === '-') {
+                    a = null;
+                } else {
+                    a = parseFloat(a.toString().split('').slice(0, a.toString().length - 1).join(''));
+                }
+                updateScreen(a, null);
             }
-        } else if (op && b) {
-            b = b.split('').slice(0, b.length - 1).join('');
-            primaryScreen.textContent = b;
-            if (b.length == 0) {
+        }
+
+        if (b !== null) {
+            if (b.toString().length == 1) {
                 b = null;
-                primaryScreen.textContent = '';
+                updateScreen(' ', null);
+
+            } else if (op) {
+                b = parseFloat(b.toString().split('').slice(0, b.toString().length - 1).join(''));
+                updateScreen(b, null);   
+            } 
+        }
+    }
+
+    if (funcButton == '.') {
+        if (!op) {
+            if (a !== null && !a.toString().includes('.')) {
+                a = a.toString().split('').concat('.').join('');
+                updateScreen(a, null);
+           
+            } else if (a === null) {
+                a = '0.';
+                updateScreen(a, null);
             }
-        } 
-        //   else if (result) {
-        //     result = result.split('').slice(0, result.length - 1).join('');
-        //     primaryScreen.textContent = result;
-        //     if (result.length == 0) {
-        //         result = null;
-        //         primaryScreen.textContent = 0;
-        //     }
-        // }
+        }
+        
+        if (op) {
+            if (b !== null && !b.toString().includes('.')) {
+                b = b.toString().split('').concat('.').join('');
+                updateScreen(b, null);
+
+            } else if (b === null) {
+                b = '0.';
+                updateScreen(b, null);
+            }
+        }
+    }
+
+    if (funcButton == '+/-') {
+        if (!op) {
+            if (a && a.toString().split('')[0] === '-') {
+                a = ['+'].concat(a.toString().split('').slice(1)).join('');
+            } else if (a && a.toString().split('')[0] === '+') {
+                a = ['-'].concat(a.toString().split('').slice(1)).join('');
+            } else if (a) {
+                a = ['-'].concat(a.toString().split('').slice(0)).join('');
+            }
+            if (a) {
+                a = parseFloat(a);
+                updateScreen(a, null);
+            }
+        }
+        if (op) {
+            if (b && b.toString().split('')[0] === '-') {
+                b = ['+'].concat(b.toString().split('').slice(1)).join('');
+            } else if (b && b.toString().split('')[0] === '+') {
+                b = ['-'].concat(b.toString().split('').slice(1)).join('');
+            } else if (b) {
+                b = ['-'].concat(b.toString().split('').slice(0)).join('');
+            }
+            if (b) {
+                b = parseFloat(b);
+                updateScreen(b, null);
+            }
+        }
+ 
     }
 
     console.log('--------doFunc----------')
-    console.log("a: " + a, );
-    console.log("b: " + b); 
-    console.log('op: ' + op);
-    console.log('result: ' + result);
+    console.log("a: ", a);
+    console.log("b: ", b); 
+    console.log('op: ', op);
+    console.log('result: ', result);
 }
 
 function updateScreen(primaryScreenText, secondaryScreenText) {
-    primaryScreen.textContent = primaryScreenText;
-    secondaryScreen = secondaryScreenText;
+    // console.clear();
+    console.log(
+    '---updateScreen---',
+    '\narg1:',primaryScreenText, 
+    '\narg2:', secondaryScreenText);
+
+    if (secondaryScreenText === null) {
+        primaryScreen.textContent = primaryScreenText;
+        console.log('Primary screen updated')
+    }
+    if (primaryScreenText === null) {
+        secondaryScreen.textContent = secondaryScreenText;
+        console.log('Secondary screen updated')
+    }
+
+    if ((secondaryScreenText !== null) && (primaryScreenText !== null)) {
+        primaryScreen.textContent = primaryScreenText;
+        secondaryScreen.textContent = secondaryScreenText;
+        console.log('Both screens updated');
+    }
+
+    console.log(
+    'Primary screen textContent:', primaryScreen.textContent, 
+    '\nSecondary screen textContent:', secondaryScreen.textContent);
 }
 
 
@@ -147,3 +251,4 @@ operatorBtns.forEach(btn => {
 funcBtns.forEach(btn => {
     btn.addEventListener("click", doFunc);
     });
+

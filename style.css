@@ -14,7 +14,6 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     background-color: #074F57;
 }
 
@@ -30,20 +29,20 @@ header {
 }
 
 main {
-
+    margin: auto;
 }
 
 footer {
-    position: relative;
-    top: 3.75rem;
+    position: fixed;
+    bottom: 0.75rem;
     font-family: Open Sans, Arial, Helvetica, sans-serif;
     font-size: 1rem;
     font-weight: 700;
 }
 
 .container {
-    width: 21rem;
-    height: 30rem;
+    width: 22rem;
+    height: 32rem;
     display: flex;
     flex-direction: column;
     box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
@@ -74,7 +73,6 @@ footer {
     background-color:  rgba(255, 255 ,255, 0.04);
     font-size: 1rem;
     border: 0px;
-    cursor: pointer;
     transition: 1s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
@@ -93,7 +91,6 @@ button[data-func='=']:hover {
     background-color: rgb(92, 186, 112);
     color:#303030;
 }
-
 
 .screen > p.primary  {
     position: absolute;
@@ -116,6 +113,5 @@ button[data-func='=']:hover {
 
     footer {
         transform: scale(0.8);
-        top: 0;
     }
 }
