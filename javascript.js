@@ -1,4 +1,8 @@
 function Calculator() {
+    this.a = null;
+    this.b = null;
+    this.op = null;
+    this.result = null;
     this['+'] = (a, b) => a + b;
     this['-'] = (a, b) => a - b;
     this['*'] = (a, b) => a * b;
