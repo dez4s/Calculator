@@ -36,7 +36,8 @@ function getNumber() {
             result = null;
             a = parseFloat(number);
             updateScreen(a, ' ');
-        } else if (a !== null) {
+        } else if (a !== null ) {
+            // && a.toString().length < 15
             a += number;
 
             if (a.includes('.')) {
@@ -235,8 +236,8 @@ function updateScreen(primaryScreenText, secondaryScreenText) {
 const numberBtns = document.querySelectorAll('button[data-number]');
 const operatorBtns = document.querySelectorAll('button[data-operator]');
 const funcBtns = document.querySelectorAll('button[data-func]');
-const primaryScreen = document.querySelector('.screen .primary');
-const secondaryScreen = document.querySelector('.screen .secondary');
+const primaryScreen = document.querySelector('.screen div.primary');
+const secondaryScreen = document.querySelector('.screen div.secondary');
 
 numberBtns.forEach(btn => {
     btn.addEventListener("click", getNumber);
