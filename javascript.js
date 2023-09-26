@@ -8,7 +8,7 @@ function Calculator() {
     this['-'] = (a, b) => a - b;
     this['*'] = (a, b) => a * b;
     this['%'] = (a, b) => a % b;
-    this['÷'] = (a, b) => a / b;
+    this['/'] = (a, b) => a / b;
 
     this.calculate = () => {
         if (this.b !== null) {
@@ -84,7 +84,7 @@ function Calculator() {
     }
 
     this.delete = function () {
-        if (this.a !== null) {
+        if (this.a) {
             if (this.a.toString().length == 1) {
                 this.a = null;
 
@@ -97,7 +97,7 @@ function Calculator() {
             }
         }
 
-        if (this.b !== null) {
+        if (this.b) {
             if (this.b.toString().length == 1) {
                 this.b = null;
 
@@ -160,7 +160,6 @@ function Calculator() {
                 this.b = parseFloat(this.b);
             }
         }
-
     }
 
     this.updateScreen = function (buttonType) {
@@ -172,7 +171,7 @@ function Calculator() {
             primaryScreen.textContent = this.b;
         }    
 
-        if (buttonType === '=' && this.result !== null) {
+        if ((buttonType === '=' || buttonType === 'Enter') && this.result !== null) {
             secondaryScreen.textContent = null;
             primaryScreen.textContent = this.result;
         }
@@ -185,8 +184,6 @@ function Calculator() {
     }
 }
 
-const calc = new Calculator();
-
 const numberBtns = document.querySelectorAll('button[data-number]');
 const operatorBtns = document.querySelectorAll('button[data-operator]');
 const funcBtns = document.querySelectorAll('button[data-func]');
@@ -198,46 +195,100 @@ const clear = document.querySelector('[data-func="AC"]');
 const float = document.querySelector('[data-func="."]');
 const signChanger = document.querySelector('[data-func="+/-"]');
 
+const calc = new Calculator();
+
 numberBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", (e) => {
+        e.preventDefault();
         calc.getNumber(btn.getAttribute('data-number'));
         calc.updateScreen();
+        btn.blur();
     });
 });
 
 operatorBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        calc.setOperator(btn.getAttribute('data-operator'));
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        calc.setOperator(btn.textContent);
         calc.updateScreen();
+        btn.blur();
     });
 });
 
-equals.addEventListener('click', () => {
+equals.addEventListener('click', (e) => {
+    e.preventDefault();
     calc.calculate();
     calc.updateScreen(equals.getAttribute('data-func'));
+    equals.blur();
 });
 
-del.addEventListener('click', () => {
+del.addEventListener('click', (e) => {
+    e.preventDefault();
     calc.delete();
     calc.updateScreen(del.getAttribute('data-func'));
+    del.blur();
 });
 
-clear.addEventListener('click', () => {
+clear.addEventListener('click', (e) => {
+    e.preventDefault();
     calc.clear();
     calc.updateScreen();
+    clear.blur();
 });
 
-float.addEventListener('click', () => {
+float.addEventListener('click', (e) => {
+    e.preventDefault();
     calc.float();
     calc.updateScreen();
+    float.blur();
 });
 
-signChanger.addEventListener('click', () => {
+signChanger.addEventListener('click', (e) => {
+    e.preventDefault();
     calc.changeSign();
     calc.updateScreen();
+    signChanger.blur();
 });
 
 window.addEventListener('keydown', (e) => {
     console.log(e.key);
-});
 
+    if (e.key >= 0 && e.key < 10) {
+        calc.getNumber(e.key);
+        calc.updateScreen();
+    }
+
+    if (e.key === '+' || 
+        e.key === '-' || 
+        e.key === '*' || 
+        e.key === '%' || 
+        e.key === '/') {
+        calc.setOperator(e.key);
+        calc.updateScreen();
+    }
+
+    if (e.key === "Enter" || e.key === '=') {
+        calc.calculate();
+        calc.updateScreen(e.key);
+    }
+
+    if (e.key === "Backspace") {
+        calc.delete();
+        calc.updateScreen();
+    }
+
+    if (e.key.toLowerCase() === "c") {
+        calc.clear();
+        calc.updateScreen();
+    }
+
+    if (e.key === ".") {
+        calc.float();
+        calc.updateScreen();
+    }
+
+    if (e.key === "|") {
+        calc.changeSign();
+        calc.updateScreen();
+    }
+});

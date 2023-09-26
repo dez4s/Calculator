@@ -6,7 +6,7 @@
     list-style-type: none;
     font-family: Russo One, Arial, sans-serif;
     color: #E4C5AF;
-
+    user-select: none;
 }
 
 body {
