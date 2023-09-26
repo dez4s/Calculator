@@ -3,257 +3,241 @@ function Calculator() {
     this.b = null;
     this.op = null;
     this.result = null;
+
     this['+'] = (a, b) => a + b;
     this['-'] = (a, b) => a - b;
     this['*'] = (a, b) => a * b;
+    this['%'] = (a, b) => a % b;
     this['÷'] = (a, b) => a / b;
-    this['^'] = (a, b) => a ** b;
 
-    this.calculate = (a, b, op) => {
-        const mathOperationResult = this[op](parseFloat(a), parseFloat(b));
-        let aDecimals = 0;
-        let bDecimals = 0;
+    this.calculate = () => {
+        if (this.b !== null) {
+            this.b = parseFloat(this.b);
+            const getOperationResult = this[this.op](this.a, this.b);
 
-        if (a.toString().includes('.')) aDecimals = a.split('').slice(a.split('').indexOf('.') + 1).length;
-        if (b.toString().includes('.')) bDecimals = b.split('').slice(b.split('').indexOf('.') + 1).length;
+           this.result = getOperationResult;
 
+            if (this.a.toString().includes('.') && this.b.toString().includes('.'))  {
+                let aDecimals = 0;
+                let bDecimals = 0;
 
-        if (aDecimals > bDecimals) {
-            return mathOperationResult.toFixed(aDecimals);
-        } else {
-            return mathOperationResult.toFixed(bDecimals);
-        }
-    }
-}
+                aDecimals = this.a.toString().split('').slice(this.a.toString().split('').indexOf('.') + 1).length;
+                bDecimals = this.b.toString().split('').slice(this.b.toString().split('').indexOf('.') + 1).length;
 
-const calc = new Calculator();
-
-let a = null;
-let b = null;
-let op = null;
-let result = null;
-
-function getNumber() {
-    const number = this.getAttribute('data-number');
-    if (!op) {
-        if (a === null) { 
-            result = null;
-            a = parseFloat(number);
-            updateScreen(a, ' ');
-        } else if (a !== null ) {
-            // && a.toString().length < 15
-            a += number;
-
-            if (a.includes('.')) {
-                a = parseFloat(a).toFixed(a.split('').slice(a.split('').indexOf('.')).length - 1);
-            } else {
-                a = parseFloat(a);
-            }
-
-            updateScreen(a, null);
-        }
-    } else if (op) {
-        if (b === null) {
-            b = parseFloat(number);
-            updateScreen(b, null);
-        } else if (b !== null) {
-            b += number;
-
-            if (b.includes('.')) {
-                b = parseFloat(b).toFixed(b.split('').slice(b.split('').indexOf('.')).length - 1);
-            } else {
-                b = parseFloat(b);
-            }
-
-            updateScreen(b, null);
-        }
-    }
-
-    console.log(a.toString().length);
-
-    console.log('---------getNumber---------')
-    console.log("a: ", a);
-    console.log("b: ", b); 
-    console.log('op: ', op);
-    console.log('result: ', result);
-}
-
-function setOperator(e) {
-     if (op && (b !== null)) { 
-        doFunc(e);
-        a = result;
-        result = null;
-    } else if (result !== null) { 
-        a = result;
-        result = null;
-    } 
-
-    if (a !== null) {
-        op = this.getAttribute('data-operator');
-        updateScreen(' ', `${a} ${op}`);
-    }
-    
-    console.log('--------setOperator----------')
-    console.log("a: ", a);
-    console.log("b: ", b); 
-    console.log('op: ', op);
-    console.log('result: ', result);
-}
-
-function doFunc(e) {
-    const funcButton = e.target.getAttribute('data-func');
-    const isOpPressedTwice = e.target.hasAttribute('data-operator');
-
-    if ((funcButton == '=' || isOpPressedTwice) && (b !== null)) {
-        result = calc.calculate(a, b, op);
-        updateScreen(result, `${a} ${op} ${b} =`);
-        a = null;
-        b = null;
-        op = null;
-    }
-
-    if (funcButton == 'reset') {
-        a = null;
-        b = null;
-        op = null;
-        result = null;
-        updateScreen(' ', ' ');
-    } 
-
-    if (funcButton == 'del') {
-        if (a !== null) {
-            if (a.toString().length == 1) {
-                a = null;
-                updateScreen(' ', null);
-
-            } else if (!op) {
-                if (a && a.toString().length === 2 && a.toString().split('')[0] === '-') {
-                    a = null;
+                if (aDecimals > bDecimals) {
+                    this.result = getOperationResult.toFixed(aDecimals);
                 } else {
-                    a = parseFloat(a.toString().split('').slice(0, a.toString().length - 1).join(''));
+                    this.result = getOperationResult.toFixed(bDecimals);
                 }
-                updateScreen(a, null);
+            }
+
+            this.a = null;
+            this.b = null;
+            this.op = null;            
+        }
+    }
+
+    this.getNumber = function (number) {
+        if (!this.op) {
+            if (this.a === null) { 
+                this.result = null;
+                this.a = parseFloat(number);
+            } else if (this.a !== null ) {
+                this.a += number;
+    
+                if (this.a.includes('.')) {
+                    this.a = parseFloat(this.a).toFixed(this.a.split('').slice(this.a.split('').indexOf('.')).length - 1);
+                } else {
+                    this.a = parseFloat(this.a);
+                }
+            }
+        } else if (this.op) {
+            if (this.b === null) {
+                this.b = parseFloat(number);
+            } else if (this.b !== null) {
+                this.b += number;
+    
+                if (this.b.includes('.')) {
+                    this.b = parseFloat(this.b).toFixed(this.b.split('').slice(this.b.split('').indexOf('.')).length - 1);
+                } else {
+                    this.b = parseFloat(this.b);
+                }
+            }
+        }
+    }
+
+    this.setOperator = function (operator) {
+        if (this.op && (this.b !== null)) { 
+            this.b = parseFloat(this.b);
+            this.calculate();
+            this.a = this.result;
+            this.result = null;
+        } else if (this.result !== null) { 
+            this.a = this.result;
+            this.result = null;
+        } 
+
+        if (this.a !== null) {
+            this.op = operator;
+            this.a = parseFloat(this.a);
+        }
+    }
+
+    this.delete = function () {
+        if (this.a !== null) {
+            if (this.a.toString().length == 1) {
+                this.a = null;
+
+            } else if (!this.op) {
+                if (this.a && this.a.toString().length === 2 && this.a.toString().split('')[0] === '-') {
+                    this.a = null;
+                } else {
+                    this.a = parseFloat(this.a.toString().split('').slice(0, this.a.toString().length - 1).join(''));
+                }
             }
         }
 
-        if (b !== null) {
-            if (b.toString().length == 1) {
-                b = null;
-                updateScreen(' ', null);
+        if (this.b !== null) {
+            if (this.b.toString().length == 1) {
+                this.b = null;
 
-            } else if (op) {
-                b = parseFloat(b.toString().split('').slice(0, b.toString().length - 1).join(''));
-                updateScreen(b, null);   
+            } else if (this.op) {
+                this.b = parseFloat(this.b.toString().split('').slice(0, this.b.toString().length - 1).join(''));
             } 
         }
     }
 
-    if (funcButton == '.') {
-        if (!op) {
-            if (a !== null && !a.toString().includes('.')) {
-                a = a.toString().split('').concat('.').join('');
-                updateScreen(a, null);
+     this.clear = function () {
+        this.a = null;
+        this.b = null;
+        this.op = null;
+        this.result = null;
+    } 
+
+    this.float = function () {
+        if (!this.op) {
+            if (this.a !== null && !this.a.toString().includes('.')) {
+                this.a = this.a.toString().split('').concat('.').join('');
            
-            } else if (a === null) {
-                a = '0.';
-                updateScreen(a, null);
+            } else if (this.a === null) {
+                this.result = null;
+                this.a = '0.';
             }
         }
         
-        if (op) {
-            if (b !== null && !b.toString().includes('.')) {
-                b = b.toString().split('').concat('.').join('');
-                updateScreen(b, null);
+        if (this.op) {
+            if (this.b !== null && !this.b.toString().includes('.')) {
+                this.b = this.b.toString().split('').concat('.').join('');
 
-            } else if (b === null) {
-                b = '0.';
-                updateScreen(b, null);
+            } else if (this.b === null) {
+                this.b = '0.';
             }
         }
+    } 
+    
+    this.changeSign = function () {
+        if (!this.op) {
+            if (this.a && this.a.toString().split('')[0] === '-') {
+                this.a = ['+'].concat(this.a.toString().split('').slice(1)).join('');
+            } else if (this.a && this.a.toString().split('')[0] === '+') {
+                this.a = ['-'].concat(this.a.toString().split('').slice(1)).join('');
+            } else if (this.a) {
+                this.a = ['-'].concat(this.a.toString().split('').slice(0)).join('');
+            }
+            if (this.a) {
+                this.a = parseFloat(this.a);
+            }
+        }
+        if (this.op) {
+            if (this.b && this.b.toString().split('')[0] === '-') {
+                this.b = ['+'].concat(this.b.toString().split('').slice(1)).join('');
+            } else if (this.b && this.b.toString().split('')[0] === '+') {
+                this.b = ['-'].concat(this.b.toString().split('').slice(1)).join('');
+            } else if (this.b) {
+                this.b = ['-'].concat(this.b.toString().split('').slice(0)).join('');
+            }
+            if (this.b) {
+                this.b = parseFloat(this.b);
+            }
+        }
+
     }
 
-    if (funcButton == '+/-') {
-        if (!op) {
-            if (a && a.toString().split('')[0] === '-') {
-                a = ['+'].concat(a.toString().split('').slice(1)).join('');
-            } else if (a && a.toString().split('')[0] === '+') {
-                a = ['-'].concat(a.toString().split('').slice(1)).join('');
-            } else if (a) {
-                a = ['-'].concat(a.toString().split('').slice(0)).join('');
-            }
-            if (a) {
-                a = parseFloat(a);
-                updateScreen(a, null);
-            }
-        }
-        if (op) {
-            if (b && b.toString().split('')[0] === '-') {
-                b = ['+'].concat(b.toString().split('').slice(1)).join('');
-            } else if (b && b.toString().split('')[0] === '+') {
-                b = ['-'].concat(b.toString().split('').slice(1)).join('');
-            } else if (b) {
-                b = ['-'].concat(b.toString().split('').slice(0)).join('');
-            }
-            if (b) {
-                b = parseFloat(b);
-                updateScreen(b, null);
-            }
-        }
- 
-    }
+    this.updateScreen = function (buttonType) {
+        if (!this.op && this.result === null) {
+            secondaryScreen.textContent = null;
+            primaryScreen.textContent = this.a;
+        } else if (this.op) {
+            secondaryScreen.textContent = `${this.a} ${this.op}`;
+            primaryScreen.textContent = this.b;
+        }    
 
-    console.log('--------doFunc----------')
-    console.log("a: ", a);
-    console.log("b: ", b); 
-    console.log('op: ', op);
-    console.log('result: ', result);
+        if (buttonType === '=' && this.result !== null) {
+            secondaryScreen.textContent = null;
+            primaryScreen.textContent = this.result;
+        }
+        console.clear();
+        console.log('--------DEBUG----------')
+        console.log("a: ", this.a);
+        console.log("b: ", this.b); 
+        console.log('op: ', this.op);
+        console.log('result: ', this.result);
+    }
 }
 
-function updateScreen(primaryScreenText, secondaryScreenText) {
-    // console.clear();
-    console.log(
-    '---updateScreen---',
-    '\narg1:',primaryScreenText, 
-    '\narg2:', secondaryScreenText);
-
-    if (secondaryScreenText === null) {
-        primaryScreen.textContent = primaryScreenText;
-        console.log('Primary screen updated')
-    }
-    if (primaryScreenText === null) {
-        secondaryScreen.textContent = secondaryScreenText;
-        console.log('Secondary screen updated')
-    }
-
-    if ((secondaryScreenText !== null) && (primaryScreenText !== null)) {
-        primaryScreen.textContent = primaryScreenText;
-        secondaryScreen.textContent = secondaryScreenText;
-        console.log('Both screens updated');
-    }
-
-    console.log(
-    'Primary screen textContent:', primaryScreen.textContent, 
-    '\nSecondary screen textContent:', secondaryScreen.textContent);
-}
-
+const calc = new Calculator();
 
 const numberBtns = document.querySelectorAll('button[data-number]');
 const operatorBtns = document.querySelectorAll('button[data-operator]');
 const funcBtns = document.querySelectorAll('button[data-func]');
 const primaryScreen = document.querySelector('.screen div.primary');
 const secondaryScreen = document.querySelector('.screen div.secondary');
+const equals = document.querySelector('[data-func="="]');
+const del = document.querySelector('[data-func="DEL"]');
+const clear = document.querySelector('[data-func="AC"]');
+const float = document.querySelector('[data-func="."]');
+const signChanger = document.querySelector('[data-func="+/-"]');
 
 numberBtns.forEach(btn => {
-    btn.addEventListener("click", getNumber);
+    btn.addEventListener("click", () => {
+        calc.getNumber(btn.getAttribute('data-number'));
+        calc.updateScreen();
     });
-
+});
 
 operatorBtns.forEach(btn => {
-    btn.addEventListener("click", setOperator);
+    btn.addEventListener('click', () => {
+        calc.setOperator(btn.getAttribute('data-operator'));
+        calc.updateScreen();
     });
+});
 
+equals.addEventListener('click', () => {
+    calc.calculate();
+    calc.updateScreen(equals.getAttribute('data-func'));
+});
 
-funcBtns.forEach(btn => {
-    btn.addEventListener("click", doFunc);
-    });
+del.addEventListener('click', () => {
+    calc.delete();
+    calc.updateScreen(del.getAttribute('data-func'));
+});
+
+clear.addEventListener('click', () => {
+    calc.clear();
+    calc.updateScreen();
+});
+
+float.addEventListener('click', () => {
+    calc.float();
+    calc.updateScreen();
+});
+
+signChanger.addEventListener('click', () => {
+    calc.changeSign();
+    calc.updateScreen();
+});
+
+window.addEventListener('keydown', (e) => {
+    console.log(e.key);
+});
 
