@@ -12,25 +12,36 @@ function Calculator() {
 
     this.calculate = () => {
         if (this.b !== null) {
-            this.b = parseFloat(this.b);
-            const getOperationResult = this[this.op](this.a, this.b);
-
-           this.result = getOperationResult;
+            const getOperationResult = this[this.op](parseFloat(this.a), parseFloat(this.b));
 
             if (this.a.toString().includes('.') && this.b.toString().includes('.'))  {
                 let aDecimals = 0;
                 let bDecimals = 0;
 
-                aDecimals = this.a.toString().split('').slice(this.a.toString().split('').indexOf('.') + 1).length;
-                bDecimals = this.b.toString().split('').slice(this.b.toString().split('').indexOf('.') + 1).length;
+                aDecimals = this.a.toString().split('.')[1].length;
+                bDecimals = this.b.toString().split('.')[1].length;
 
                 if (aDecimals > bDecimals) {
-                    this.result = getOperationResult.toFixed(aDecimals);
+                    this.result = parseFloat(getOperationResult.toFixed(aDecimals));
                 } else {
-                    this.result = getOperationResult.toFixed(bDecimals);
+                    this.result = parseFloat(getOperationResult.toFixed(bDecimals));
                 }
-            }
 
+            } else if (this.a.toString().includes('.')) {
+                let aDecimals = 0;
+                aDecimals = this.a.toString().split('.')[1].length;
+                this.result = parseFloat(getOperationResult.toFixed(aDecimals));
+
+            } else if (this.b.toString().includes('.')) {
+                let bDecimals = 0;
+                bDecimals = this.b.toString().split('.')[1].length;
+                this.result = parseFloat(getOperationResult.toFixed(bDecimals));
+
+            } else {
+                this.result = getOperationResult;
+            } // set length after the floating point if one or both of the numbers are floating point numbers; the length  will be the largest between the two; 0.555 + 1.55555 = 2,11055; TO AVOID HOW JS HANDLES FLOATING-POINT ARITHMETICS; Ex: 5 - 4.001 = 0.9989999999999997; This work-around will make the result 0.999.
+
+            // this.result = getOperationResult;
             this.a = null;
             this.b = null;
             this.op = null;            
@@ -41,69 +52,67 @@ function Calculator() {
         if (!this.op) {
             if (this.a === null) { 
                 this.result = null;
-                this.a = parseFloat(number);
+                this.a = number;
+
             } else if (this.a !== null ) {
                 this.a += number;
-    
-                if (this.a.includes('.')) {
-                    this.a = parseFloat(this.a).toFixed(this.a.split('').slice(this.a.split('').indexOf('.')).length - 1);
-                } else {
-                    this.a = parseFloat(this.a);
-                }
+                if (this.a.toString()[0] == '0' && !this.a.toString().includes('.')) this.a = parseFloat(this.a);
             }
         } else if (this.op) {
             if (this.b === null) {
-                this.b = parseFloat(number);
+                this.b = number;
+
             } else if (this.b !== null) {
                 this.b += number;
-    
-                if (this.b.includes('.')) {
-                    this.b = parseFloat(this.b).toFixed(this.b.split('').slice(this.b.split('').indexOf('.')).length - 1);
-                } else {
-                    this.b = parseFloat(this.b);
-                }
+                if (this.b.toString()[0] == '0' && !this.b.toString().includes('.')) this.b = parseFloat(this.b);
             }
         }
     }
 
     this.setOperator = function (operator) {
         if (this.op && (this.b !== null)) { 
-            this.b = parseFloat(this.b);
             this.calculate();
-            this.a = this.result;
+            this.a = this.result.toString();
             this.result = null;
+
         } else if (this.result !== null) { 
-            this.a = this.result;
+            this.a = this.result.toString();
             this.result = null;
         } 
 
         if (this.a !== null) {
             this.op = operator;
-            this.a = parseFloat(this.a);
+            if (this.a.toString().includes('.') && this.a.toString().split('.')[1].length === 0) {
+                this.a = this.a.toString().split('.')[0]; // to avoid getting ex: '5.' instead of '5' on secondaryScreen when pressing an operator
+            }
         }
     }
 
     this.delete = function () {
-        if (this.a) {
-            if (this.a.toString().length == 1) {
+        if (this.a !== null && !this.op) {
+            if (this.a.toString().length === 1) {
                 this.a = null;
 
-            } else if (!this.op) {
-                if (this.a && this.a.toString().length === 2 && this.a.toString().split('')[0] === '-') {
+            } else {
+                if (this.a && this.a.toString().length === 2 && this.a.toString()[0] === '-') {
                     this.a = null;
                 } else {
-                    this.a = parseFloat(this.a.toString().split('').slice(0, this.a.toString().length - 1).join(''));
+                    this.a = this.a.toString().slice(0, this.a.toString().length - 1);
                 }
             }
         }
 
-        if (this.b) {
-            if (this.b.toString().length == 1) {
+        if (this.b !== null && this.op) {
+            if (this.b.toString().length === 1) {
                 this.b = null;
 
-            } else if (this.op) {
-                this.b = parseFloat(this.b.toString().split('').slice(0, this.b.toString().length - 1).join(''));
-            } 
+            } else {
+                if (this.b && this.b.toString().length === 2 && this.b.toString()[0] === '-') {
+                    this.b = null;
+                } else {
+                    this.b = this.b.toString().slice(0, this.b.toString().length - 1);
+                }
+            }
         }
     }
 
@@ -117,7 +126,7 @@ function Calculator() {
     this.float = function () {
         if (!this.op) {
             if (this.a !== null && !this.a.toString().includes('.')) {
-                this.a = this.a.toString().split('').concat('.').join('');
+                this.a = this.a.toString().concat('.');
            
             } else if (this.a === null) {
                 this.result = null;
@@ -127,7 +136,7 @@ function Calculator() {
         
         if (this.op) {
             if (this.b !== null && !this.b.toString().includes('.')) {
-                this.b = this.b.toString().split('').concat('.').join('');
+                this.b = this.b.toString().concat('.');
 
             } else if (this.b === null) {
                 this.b = '0.';
@@ -137,27 +146,21 @@ function Calculator() {
     
     this.changeSign = function () {
         if (!this.op) {
-            if (this.a && this.a.toString().split('')[0] === '-') {
-                this.a = ['+'].concat(this.a.toString().split('').slice(1)).join('');
-            } else if (this.a && this.a.toString().split('')[0] === '+') {
-                this.a = ['-'].concat(this.a.toString().split('').slice(1)).join('');
+            if (this.a && this.a.toString()[0] === '-') {
+                this.a = ''.concat(this.a.toString().slice(1));
+            } else if (this.a && this.a.toString()[0] === '+') {
+                this.a = '-'.concat(this.a.toString().slice(1));
             } else if (this.a) {
-                this.a = ['-'].concat(this.a.toString().split('').slice(0)).join('');
-            }
-            if (this.a) {
-                this.a = parseFloat(this.a);
-            }
+                this.a = '-'.concat(this.a.toString().slice(0));
+            } 
         }
         if (this.op) {
-            if (this.b && this.b.toString().split('')[0] === '-') {
-                this.b = ['+'].concat(this.b.toString().split('').slice(1)).join('');
-            } else if (this.b && this.b.toString().split('')[0] === '+') {
-                this.b = ['-'].concat(this.b.toString().split('').slice(1)).join('');
+            if (this.b && this.b.toString()[0] === '-') {
+                this.b = ''.concat(this.b.toString().slice(1));
+            } else if (this.b && this.b.toString()[0] === '+') {
+                this.b = '-'.concat(this.b.toString().slice(1));
             } else if (this.b) {
-                this.b = ['-'].concat(this.b.toString().split('').slice(0)).join('');
-            }
-            if (this.b) {
-                this.b = parseFloat(this.b);
+                this.b = '-'.concat(this.b.toString().slice(0));
             }
         }
     }
@@ -251,8 +254,6 @@ signChanger.addEventListener('click', (e) => {
 });
 
 window.addEventListener('keydown', (e) => {
-    console.log(e.key);
-
     if (e.key >= 0 && e.key < 10) {
         calc.getNumber(e.key);
         calc.updateScreen();
