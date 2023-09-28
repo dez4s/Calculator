@@ -14,12 +14,12 @@ function Calculator() {
         if (this.b !== null) {
             const getOperationResult = this[this.op](parseFloat(this.a), parseFloat(this.b));
 
-            if (this.a.toString().includes('.') && this.b.toString().includes('.'))  {
+            if (this.a.includes('.') && this.b.includes('.'))  {
                 let aDecimals = 0;
                 let bDecimals = 0;
 
-                aDecimals = this.a.toString().split('.')[1].length;
-                bDecimals = this.b.toString().split('.')[1].length;
+                aDecimals = this.a.split('.')[1].length;
+                bDecimals = this.b.split('.')[1].length;
 
                 if (aDecimals > bDecimals) {
                     this.result = parseFloat(getOperationResult.toFixed(aDecimals));
@@ -27,14 +27,14 @@ function Calculator() {
                     this.result = parseFloat(getOperationResult.toFixed(bDecimals));
                 }
 
-            } else if (this.a.toString().includes('.')) {
+            } else if (this.a.includes('.')) {
                 let aDecimals = 0;
-                aDecimals = this.a.toString().split('.')[1].length;
+                aDecimals = this.a.split('.')[1].length;
                 this.result = parseFloat(getOperationResult.toFixed(aDecimals));
 
-            } else if (this.b.toString().includes('.')) {
+            } else if (this.b.includes('.')) {
                 let bDecimals = 0;
-                bDecimals = this.b.toString().split('.')[1].length;
+                bDecimals = this.b.split('.')[1].length;
                 this.result = parseFloat(getOperationResult.toFixed(bDecimals));
 
             } else {
@@ -45,6 +45,7 @@ function Calculator() {
             this.a = null;
             this.b = null;
             this.op = null;            
+            primaryScreen.style.fontSize = '1.6rem';
         }
     }
 
@@ -53,18 +54,30 @@ function Calculator() {
             if (this.a === null) { 
                 this.result = null;
                 this.a = number;
-
-            } else if (this.a !== null ) {
+                primaryScreen.style.fontSize = '1.6rem';
+               
+            } else if (this.a !== null && this.a.length < 300) {
                 this.a += number;
-                if (this.a.toString()[0] == '0' && !this.a.toString().includes('.')) this.a = parseFloat(this.a);
+
+                if (this.a.length > 150) primaryScreen.style.fontSize = '1.25rem';
+
+                if (this.a[0] == 0 && !this.a.includes('.')) this.a = parseFloat(this.a); // when the string starts with '0', parse the string and convert to number type, to avoid getting strings like '00000'; if a number dif than '0' is being inputted after '0', ex '02', the string will be parsed as '2' and this 'if' will no longer be passed
+                if (typeof this.a === 'number') this.a = this.a.toString(); // when pressing a number button after '0' is inputted and the `if` above will run the code, the strings will be parsed as numbers (as long as the `if` passes the validation); to avoid getting errors in the rest of the calculator functions due to the variables being numbers, this will convert them to strings
             }
         } else if (this.op) {
             if (this.b === null) {
                 this.b = number;
-
-            } else if (this.b !== null) {
+                primaryScreen.style.fontSize = '1.6rem';
+         
+            } else if (this.b !== null & this.b.length < 250) {
                 this.b += number;
-                if (this.b.toString()[0] == '0' && !this.b.toString().includes('.')) this.b = parseFloat(this.b);
+
+                if (this.b.length > 150) {
+                    primaryScreen.style.fontSize = '1.25rem';
+                    secondaryScreen.style.fontSize = '1.1rem';
+                }
+                if (this.b[0] == 0 && !this.b.includes('.')) this.b = parseFloat(this.b);
+                if (typeof this.b === 'number') this.b = this.b.toString();
             }
         }
     }
@@ -74,43 +87,45 @@ function Calculator() {
             this.calculate();
             this.a = this.result.toString();
             this.result = null;
+            secondaryScreen.style.fontSize = '1.25rem';
 
         } else if (this.result !== null) { 
             this.a = this.result.toString();
             this.result = null;
+            secondaryScreen.style.fontSize = '1.25rem';
         } 
 
         if (this.a !== null) {
             this.op = operator;
-            if (this.a.toString().includes('.') && this.a.toString().split('.')[1].length === 0) {
-                this.a = this.a.toString().split('.')[0]; // to avoid getting ex: '5.' instead of '5' on secondaryScreen when pressing an operator
+            if (this.a.includes('.') && this.a.split('.')[1].length === 0) {
+                this.a = this.a.split('.')[0]; // avoid getting ex: '5.' instead of '5' on secondaryScreen when pressing an operator
             }
         }
     }
 
     this.delete = function () {
         if (this.a !== null && !this.op) {
-            if (this.a.toString().length === 1) {
+            if (this.a.length === 1) {
                 this.a = null;
 
             } else {
-                if (this.a && this.a.toString().length === 2 && this.a.toString()[0] === '-') {
+                if (this.a && this.a.length === 2 && this.a[0] === '-') {
                     this.a = null;
                 } else {
-                    this.a = this.a.toString().slice(0, this.a.toString().length - 1);
+                    this.a = this.a.slice(0, this.a.length - 1);
                 }
             }
         }
 
         if (this.b !== null && this.op) {
-            if (this.b.toString().length === 1) {
+            if (this.b.length === 1) {
                 this.b = null;
 
             } else {
-                if (this.b && this.b.toString().length === 2 && this.b.toString()[0] === '-') {
+                if (this.b && this.b.length === 2 && this.b[0] === '-') {
                     this.b = null;
                 } else {
-                    this.b = this.b.toString().slice(0, this.b.toString().length - 1);
+                    this.b = this.b.slice(0, this.b.length - 1);
                 }
             }
         }
@@ -125,8 +140,8 @@ function Calculator() {
 
     this.float = function () {
         if (!this.op) {
-            if (this.a !== null && !this.a.toString().includes('.')) {
-                this.a = this.a.toString().concat('.');
+            if (this.a !== null && !this.a.includes('.')) {
+                this.a = this.a.concat('.');
            
             } else if (this.a === null) {
                 this.result = null;
@@ -135,8 +150,8 @@ function Calculator() {
         }
         
         if (this.op) {
-            if (this.b !== null && !this.b.toString().includes('.')) {
-                this.b = this.b.toString().concat('.');
+            if (this.b !== null && !this.b.includes('.')) {
+                this.b = this.b.concat('.');
 
             } else if (this.b === null) {
                 this.b = '0.';
@@ -146,21 +161,21 @@ function Calculator() {
     
     this.changeSign = function () {
         if (!this.op) {
-            if (this.a && this.a.toString()[0] === '-') {
-                this.a = ''.concat(this.a.toString().slice(1));
-            } else if (this.a && this.a.toString()[0] === '+') {
-                this.a = '-'.concat(this.a.toString().slice(1));
+            if (this.a && this.a[0] === '-') {
+                this.a = ''.concat(this.a.slice(1));
+            } else if (this.a && this.a[0] === '+') {
+                this.a = '-'.concat(this.a.slice(1));
             } else if (this.a) {
-                this.a = '-'.concat(this.a.toString().slice(0));
+                this.a = '-'.concat(this.a.slice(0));
             } 
         }
         if (this.op) {
-            if (this.b && this.b.toString()[0] === '-') {
-                this.b = ''.concat(this.b.toString().slice(1));
-            } else if (this.b && this.b.toString()[0] === '+') {
-                this.b = '-'.concat(this.b.toString().slice(1));
+            if (this.b && this.b[0] === '-') {
+                this.b = ''.concat(this.b.slice(1));
+            } else if (this.b && this.b[0] === '+') {
+                this.b = '-'.concat(this.b.slice(1));
             } else if (this.b) {
-                this.b = '-'.concat(this.b.toString().slice(0));
+                this.b = '-'.concat(this.b.slice(0));
             }
         }
     }
@@ -178,12 +193,12 @@ function Calculator() {
             secondaryScreen.textContent = null;
             primaryScreen.textContent = this.result;
         }
-        console.clear();
-        console.log('--------DEBUG----------')
-        console.log("a: ", this.a);
-        console.log("b: ", this.b); 
-        console.log('op: ', this.op);
-        console.log('result: ', this.result);
+        // console.clear();
+        // console.log('--------DEBUG----------')
+        // console.log("a: ", this.a);
+        // console.log("b: ", this.b); 
+        // console.log('op: ', this.op);
+        // console.log('result: ', this.result);
     }
 }
 
