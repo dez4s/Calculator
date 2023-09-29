@@ -33,23 +33,25 @@ main {
 }
 
 footer {
-    position: fixed;
-    bottom: 0.75rem;
+    /* position: fixed;
+    bottom: 0.75rem;*/ /*fixed position on the bottom of the viewport; will get on top of the container if the container gets bigger than the viewport */
     font-family: Open Sans, Arial, Helvetica, sans-serif;
     font-size: 1rem;
     font-weight: 700;
+    padding: 0.3rem;
 }
 
 .container {
     width: 21rem;
-    max-height: 100dvh;
-    /* height: 32rem;*/
+    /* max-height: 100dvh;*/ /*container will not get bigger than the viewport; screen content will overflow on top of the rest of the container if it gets bigger than vp*/
+    /* height: 32rem;*/ /*container will have a fixed height; will not grow when the content (screen) grows*/
     display: flex;
     flex-direction: column;
     box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
     border-radius: 2%;
     background-color: #077187;
     padding: 0.5rem;
+    margin-top: 2rem; /*center the container vertically in the document*/
 }
 
 .screen {
@@ -67,7 +69,6 @@ footer {
 .line {
     flex: 1;
     display: flex;
-    /* width: 20rem; */
 }
 
 .line button {
@@ -117,8 +118,16 @@ button[data-func='=']:hover {
     .container {
         transform: scale(0.8);
     }
-
     footer {
         transform: scale(0.8);
+    }
+}
+
+@media only screen and (max-width: 320px) {
+    .container {
+        transform: scale(0.65);
+    }
+    footer {
+        transform: scale(0.65);
     }
 }

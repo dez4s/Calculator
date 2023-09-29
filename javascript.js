@@ -8,7 +8,7 @@ function Calculator() {
     this['-'] = (a, b) => a - b;
     this['*'] = (a, b) => a * b;
     this['%'] = (a, b) => a % b;
-    this['/'] = (a, b) => a / b;
+    this['÷'] = (a, b) => a / b;
 
     this.calculate = () => {
         if (this.b !== null) {
@@ -193,12 +193,12 @@ function Calculator() {
             secondaryScreen.textContent = null;
             primaryScreen.textContent = this.result;
         }
-        // console.clear();
-        // console.log('--------DEBUG----------')
-        // console.log("a: ", this.a);
-        // console.log("b: ", this.b); 
-        // console.log('op: ', this.op);
-        // console.log('result: ', this.result);
+        console.clear();
+        console.log('--------DEBUG----------')
+        console.log("a: ", this.a);
+        console.log("b: ", this.b); 
+        console.log('op: ', this.op);
+        console.log('result: ', this.result);
     }
 }
 
