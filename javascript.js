@@ -56,7 +56,7 @@ function Calculator() {
                 this.a = number;
                 primaryScreen.style.fontSize = '1.6rem';
                
-            } else if (this.a !== null && this.a.length < 300) {
+            } else if (this.a !== null && this.a.length < 250) {
                 this.a += number;
 
                 if (this.a.length > 150) primaryScreen.style.fontSize = '1.25rem';
