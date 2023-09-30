@@ -8,13 +8,17 @@ function Calculator() {
     this['-'] = (a, b) => a - b;
     this['*'] = (a, b) => a * b;
     this['%'] = (a, b) => a % b;
-    this['÷'] = (a, b) => a / b;
+    this['/'] = (a, b) => a / b;
 
     this.calculate = () => {
         if (this.b !== null) {
+
             const getOperationResult = this[this.op](parseFloat(this.a), parseFloat(this.b));
 
-            if (this.a.includes('.') && this.b.includes('.'))  {
+            if ((this.b === '0' || this.b === '-0') && this.op === '/') {
+                this.result = 'Division by zero is undefined';
+
+            } else if (this.a.includes('.') && this.b.includes('.'))  {
                 let aDecimals = 0;
                 let bDecimals = 0;
 
@@ -39,7 +43,7 @@ function Calculator() {
 
             } else {
                 this.result = getOperationResult;
-            } // set length after the floating point if one or both of the numbers are floating point numbers; the length  will be the largest between the two; 0.555 + 1.55555 = 2,11055; TO AVOID HOW JS HANDLES FLOATING-POINT ARITHMETICS; Ex: 5 - 4.001 = 0.9989999999999997; This work-around will make the result 0.999.
+            } // set the length of the result if it is a floating point number (only in case of one or both numbers inserted are floating point numbers); the length  will be the largest between the two; 0.555 + 1.55555 = 2,11055; TO AVOID HOW JS HANDLES FLOATING-POINT ARITHMETICS; Ex: 5 - 4.001 = 0.9989999999999997; This work-around will make the result 0.999.
 
             // this.result = getOperationResult;
             this.a = null;
@@ -85,11 +89,15 @@ function Calculator() {
     this.setOperator = function (operator) {
         if (this.op && (this.b !== null)) { 
             this.calculate();
-            this.a = this.result.toString();
-            this.result = null;
+            if (Number(this.result)) { 
+                this.a = this.result.toString();
+                this.result = null;
+            } else { // this else runs when result contains the error message for division by 0
+                this.updateScreen('Error');
+            }
             secondaryScreen.style.fontSize = '1.25rem';
 
-        } else if (this.result !== null) { 
+        } else if (this.result !== null && Number(this.result)) { 
             this.a = this.result.toString();
             this.result = null;
             secondaryScreen.style.fontSize = '1.25rem';
@@ -189,10 +197,11 @@ function Calculator() {
             primaryScreen.textContent = this.b;
         }    
 
-        if ((buttonType === '=' || buttonType === 'Enter') && this.result !== null) {
+        if ((buttonType === '=' || buttonType === 'Enter' || buttonType === 'Error') && this.result !== null) {
             secondaryScreen.textContent = null;
             primaryScreen.textContent = this.result;
         }
+
         console.clear();
         console.log('--------DEBUG----------')
         console.log("a: ", this.a);
@@ -227,7 +236,7 @@ numberBtns.forEach(btn => {
 operatorBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
         e.preventDefault();
-        calc.setOperator(btn.textContent);
+        calc.setOperator(btn.getAttribute('data-operator'));
         calc.updateScreen();
         btn.blur();
     });
