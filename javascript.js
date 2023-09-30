@@ -89,15 +89,15 @@ function Calculator() {
     this.setOperator = function (operator) {
         if (this.op && (this.b !== null)) { 
             this.calculate();
-            if (Number(this.result)) { 
+            if (typeof this.result === `number`) { 
                 this.a = this.result.toString();
                 this.result = null;
-            } else { // this else runs when result contains the error message for division by 0
+            } else { // this else runs when `this.result` contains the error message (string, so the first if is falsy) for division by 0
                 this.updateScreen('Error');
             }
             secondaryScreen.style.fontSize = '1.25rem';
 
-        } else if (this.result !== null && Number(this.result)) { 
+        } else if (this.result !== null && typeof this.result === `number`) { 
             this.a = this.result.toString();
             this.result = null;
             secondaryScreen.style.fontSize = '1.25rem';
