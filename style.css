@@ -42,11 +42,9 @@ footer {
 }
 
 .container {
-    width: 21rem;
+    width: 22.5rem;
     /* max-height: 100dvh;*/ /*container will not get bigger than the viewport; screen content will overflow on top of the rest of the container if it gets bigger than vp*/
     /* height: 32rem;*/ /*container will have a fixed height; will not grow when the content (screen) grows*/
-    display: flex;
-    flex-direction: column;
     box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
     border-radius: 2%;
     background-color: #077187;
@@ -56,18 +54,16 @@ footer {
 
 .screen {
     word-wrap: break-word;
-    flex: 0.9;
     display: flex;
     flex-direction: column;
     margin: 0.25rem 0.35rem 0.35rem 0.35rem;
     background-color:  #2b2d42 ;
     border-radius: 1.75%;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 2px 4px, rgba(0, 0, 0, 0.25) 0px 7px 13px -3px, rgba(0, 0, 0, 0.15) 0px -3px 0px inset;
-    min-height: 4.75rem;
+    min-height: 5rem;
 }
 
-.line {
-    flex: 1;
+.line { 
     display: flex;
 }
 
@@ -80,7 +76,7 @@ footer {
     font-size: 0.9rem;
     border: 0px;
     transition: 1s cubic-bezier(0.075, 0.82, 0.165, 1); 
-    height: 4rem;
+    height: 4.5rem;
 }
 
 button:hover {
@@ -100,7 +96,7 @@ button[data-func='=']:hover {
 }
 
 .screen > div.primary {
-    flex: 1;
+    flex: 1; 
     text-align: right;
     font-size: 1.6rem;
     padding: 0.2rem;
